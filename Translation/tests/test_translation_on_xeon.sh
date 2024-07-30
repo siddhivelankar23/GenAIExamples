@@ -12,6 +12,7 @@ function build_docker_images() {
     cd $WORKPATH
     git clone https://github.com/opea-project/GenAIComps.git
     cd GenAIComps
+
     docker build --no-cache -t opea/llm-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/text-generation/tgi/Dockerfile .
 
     cd $WORKPATH/docker
@@ -19,6 +20,7 @@ function build_docker_images() {
 
     cd $WORKPATH/docker/ui
     docker build --no-cache -t opea/translation-ui:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f docker/Dockerfile .
+
     docker images
 }
 
@@ -31,6 +33,8 @@ function start_services() {
     export MEGA_SERVICE_HOST_IP=${ip_address}
     export LLM_SERVICE_HOST_IP=${ip_address}
     export BACKEND_SERVICE_ENDPOINT="http://${ip_address}:8888/v1/translation"
+
+    sed -i "s/backend_address/$ip_address/g" $WORKPATH/docker/ui/svelte/.env
 
     if [[ "$IMAGE_REPO" != "" ]]; then
         # Replace the container name with a test-specific name
@@ -45,7 +49,15 @@ function start_services() {
     # Start Docker Containers
     docker compose up -d
 
-    sleep 2m # Waits 2 minutes
+    n=0
+    until [[ "$n" -ge 500 ]]; do
+        docker logs tgi-service > ${LOG_PATH}/tgi_service_start.log
+        if grep -q Connected ${LOG_PATH}/tgi_service_start.log; then
+            break
+        fi
+        sleep 1s
+        n=$((n+1))
+    done
 }
 
 function validate_services() {
@@ -85,7 +97,7 @@ function validate_microservices() {
         "${ip_address}:8008/generate" \
         "generated_text" \
         "tgi" \
-        "tgi_service" \
+        "tgi-service" \
         '{"inputs":"What is Deep Learning?","parameters":{"max_new_tokens":17, "do_sample": true}}'
 
     # llm microservice
@@ -134,7 +146,7 @@ function validate_frontend() {
 
 function stop_docker() {
     cd $WORKPATH/docker/xeon
-    docker compose down
+    docker compose stop && docker compose rm -f
 }
 
 function main() {
@@ -146,6 +158,7 @@ function main() {
 
     validate_microservices
     validate_megaservice
+    validate_frontend
 
     stop_docker
     echo y | docker system prune

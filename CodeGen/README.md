@@ -39,8 +39,11 @@ To set up environment variables for deploying ChatQnA services, follow these ste
 1. Set the required environment variables:
 
 ```bash
+# Example: host_ip="192.168.1.1"
 export host_ip="External_Public_IP"
+# Example: no_proxy="localhost, 127.0.0.1, 192.168.1.1"
 export no_proxy="Your_No_Proxy"
+export HUGGINGFACEHUB_API_TOKEN="Your_Huggingface_API_Token"
 ```
 
 2. If you are in a proxy environment, also set the proxy-related environment variables:
@@ -48,35 +51,36 @@ export no_proxy="Your_No_Proxy"
 ```bash
 export http_proxy="Your_HTTP_Proxy"
 export https_proxy="Your_HTTPs_Proxy"
-export HUGGINGFACEHUB_API_TOKEN="Your_Huggingface_API_Token"
 ```
 
 3. Set up other environment variables:
 
 ```bash
-bash ./docker/set_env.sh
+source ./docker/set_env.sh
 ```
 
 ## Deploy CodeGen using Docker
 
 ### Deploy CodeGen on Gaudi
 
-- If your version of `Habana Driver` < 1.16.0 (check with `hl-smi`), run the following command directly to start ChatQnA services. Please find corresponding [docker_compose.yaml](./docker/gaudi/docker_compose.yaml).
+Please find corresponding [compose.yaml](./docker/gaudi/compose.yaml).
 
 ```bash
 cd GenAIExamples/CodeGen/docker/gaudi
-docker compose -f docker_compose.yaml up -d
+docker compose up -d
 ```
 
-- If your version of `Habana Driver` >= 1.16.0, refer to the [Gaudi Guide](./docker/gaudi/README.md) to build docker images from source.
+> Notice: Currently only the <b>Habana Driver 1.16.x</b> is supported for Gaudi.
+
+Please refer to the [Gaudi Guide](./docker/gaudi/README.md) to build docker images from source.
 
 ### Deploy CodeGen on Xeon
 
-Please find corresponding [docker_compose.yaml](./docker/xeon/docker_compose.yaml).
+Please find corresponding [compose.yaml](./docker/xeon/compose.yaml).
 
 ```bash
 cd GenAIExamples/CodeGen/docker/xeon
-docker compose -f docker_compose.yaml up -d
+docker compose up -d
 ```
 
 Refer to the [Xeon Guide](./docker/xeon/README.md) for more instructions on building docker images from source.
@@ -84,6 +88,12 @@ Refer to the [Xeon Guide](./docker/xeon/README.md) for more instructions on buil
 ## Deploy CodeGen using Kubernetes
 
 Refer to the [Kubernetes Guide](./kubernetes/manifests/README.md) for instructions on deploying CodeGen into Kubernetes on Xeon & Gaudi.
+
+## Deploy CodeGen into Kubernetes using Helm Chart
+
+Install Helm (version >= 3.15) first. Please refer to the [Helm Installation Guide](https://helm.sh/docs/intro/install/) for more information.
+
+Refer to the [CodeGen helm chart](https://github.com/opea-project/GenAIInfra/tree/main/helm-charts/codegen) for instructions on deploying CodeGen into Kubernetes on Xeon & Gaudi.
 
 # Consume CodeGen Service
 
@@ -115,6 +125,6 @@ curl http://${host_ip}:8028/generate \
   -H 'Content-Type: application/json'
 ```
 
-2. (Docker only) If all microservices work well, please check the port ${host_ip}:7778, the port may be allocated by other users, you can modify the `docker_compose.yaml`.
+2. (Docker only) If all microservices work well, please check the port ${host_ip}:7778, the port may be allocated by other users, you can modify the `compose.yaml`.
 
-3. (Docker only) If you get errors like "The container name is in use", please change container name in `docker_compose.yaml`.
+3. (Docker only) If you get errors like "The container name is in use", please change container name in `compose.yaml`.

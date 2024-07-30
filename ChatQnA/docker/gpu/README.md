@@ -78,7 +78,7 @@ Then run the command `docker images`, you will have the following 7 Docker Image
 
 ### Setup Environment Variables
 
-Since the `docker_compose.yaml` will consume some environment variables, you need to setup them in advance as below.
+Since the `compose.yaml` will consume some environment variables, you need to setup them in advance as below.
 
 ```bash
 export no_proxy=${your_no_proxy}
@@ -110,7 +110,7 @@ Note: Please replace with `host_ip` with you external IP address, do **NOT** use
 
 ```bash
 cd GenAIExamples/ChatQnA/docker/gpu/
-docker compose -f docker_compose.yaml up -d
+docker compose up -d
 ```
 
 ### Validate MicroServices and MegaService
@@ -135,21 +135,17 @@ curl http://${host_ip}:6000/v1/embeddings \
 
 3. Retriever Microservice
 
-To consume the retriever microservice, you need to generate a mock embedding vector of length 768 in Python script:
+To consume the retriever microservice, you need to generate a mock embedding vector by Python script. The length of embedding vector
+is determined by the embedding model.
+Here we use the model `EMBEDDING_MODEL_ID="BAAI/bge-base-en-v1.5"`, which vector size is 768.
 
-```python
-import random
-
-embedding = [random.uniform(-1, 1) for _ in range(768)]
-print(embedding)
-```
-
-Then substitute your mock embedding vector for the `${your_embedding}` in the following `curl` command:
+Check the vecotor dimension of your embedding model, set `your_embedding` dimension equals to it.
 
 ```bash
+export your_embedding=$(python3 -c "import random; embedding = [random.uniform(-1, 1) for _ in range(768)]; print(embedding)")
 curl http://${host_ip}:7000/v1/retrieval \
   -X POST \
-  -d '{"text":"test", "embedding":${your_embedding}}' \
+  -d "{\"text\":\"test\",\"embedding\":${your_embedding}}" \
   -H 'Content-Type: application/json'
 ```
 
@@ -249,7 +245,7 @@ curl -X POST "http://${host_ip}:6009/v1/dataprep/delete_file" \
 
 ## Enable LangSmith for Monotoring Application (Optional)
 
-LangSmith offers tools to debug, evaluate, and monitor language models and intelligent agents. It can be used to assess benchmark data for each microservice. Before launching your services with `docker compose -f docker_compose.yaml up -d`, you need to enable LangSmith tracing by setting the `LANGCHAIN_TRACING_V2` environment variable to true and configuring your LangChain API key.
+LangSmith offers tools to debug, evaluate, and monitor language models and intelligent agents. It can be used to assess benchmark data for each microservice. Before launching your services with `docker compose -f compose.yaml up -d`, you need to enable LangSmith tracing by setting the `LANGCHAIN_TRACING_V2` environment variable to true and configuring your LangChain API key.
 
 Here's how you can do it:
 
@@ -268,7 +264,7 @@ export LANGCHAIN_API_KEY=ls_...
 
 ## 🚀 Launch the UI
 
-To access the frontend, open the following URL in your browser: http://{host_ip}:5173. By default, the UI runs on port 5173 internally. If you prefer to use a different host port to access the frontend, you can modify the port mapping in the `docker_compose.yaml` file as shown below:
+To access the frontend, open the following URL in your browser: http://{host_ip}:5173. By default, the UI runs on port 5173 internally. If you prefer to use a different host port to access the frontend, you can modify the port mapping in the `compose.yaml` file as shown below:
 
 ```yaml
   chaqna-ui-server:
