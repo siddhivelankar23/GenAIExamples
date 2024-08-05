@@ -11,8 +11,8 @@ EMBEDDING_SERVICE_HOST_IP = os.getenv("EMBEDDING_SERVICE_HOST_IP", "0.0.0.0")
 EMBEDDING_SERVICE_PORT = int(os.getenv("EMBEDDING_SERVICE_PORT", 6000))
 RETRIEVER_SERVICE_HOST_IP = os.getenv("RETRIEVER_SERVICE_HOST_IP", "0.0.0.0")
 RETRIEVER_SERVICE_PORT = int(os.getenv("RETRIEVER_SERVICE_PORT", 7000))
-LLM_SERVICE_HOST_IP = os.getenv("LLM_SERVICE_HOST_IP", "0.0.0.0")
-LLM_SERVICE_PORT = int(os.getenv("LLM_SERVICE_PORT", 9000))
+LVM_SERVICE_HOST_IP = os.getenv("LVM_SERVICE_HOST_IP", "0.0.0.0")
+LVM_SERVICE_PORT = int(os.getenv("LVM_SERVICE_PORT", 9000))
 
 
 class MMRagService:
@@ -38,17 +38,17 @@ class MMRagService:
             use_remote_service=True,
             service_type=ServiceType.RETRIEVER,
         )
-        llm = MicroService(
-            name="llm",
-            host=LLM_SERVICE_HOST_IP,
-            port=LLM_SERVICE_PORT,
+        lvm = MicroService(
+            name="lvm",
+            host=LVM_SERVICE_HOST_IP,
+            port=LVM_SERVICE_PORT,
             endpoint="/v1/chat/completions",
             use_remote_service=True,
-            service_type=ServiceType.LLM,
+            service_type=ServiceType.LVM,
         )
-        self.megaservice.add(embedding).add(retriever).add(llm)
+        self.megaservice.add(embedding).add(retriever).add(lvm)
         self.megaservice.flow_to(embedding, retriever)
-        self.megaservice.flow_to(retriever, llm)
+        self.megaservice.flow_to(retriever, lvm)
         self.gateway = MMRagGateway(megaservice=self.megaservice, host="0.0.0.0", port=self.port)
 
 
