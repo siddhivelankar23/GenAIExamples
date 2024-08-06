@@ -23,23 +23,7 @@ import os
 from data.medical_data_prepare import data_preperation
 from data.video_data_prep import ingest_multimodal
 
-# from ref_utils.postprocess_functions import (
-#     create_train_scores_json,
-#     create_prediction_dict,
-#     create_confusion_matrix_for_inference,
-#     create_torch_model_archiver,
-#     create_ensemble_workflow,
-#     create_model_config_file,
-#     create_model_snapshot,
-# )
-
 root_folder = os.path.dirname(os.path.abspath(__file__))
-# sys.path.insert(0, os.path.join(root_folder, "nlp_classification_wf"))
-# sys.path.insert(0, os.path.join(root_folder, "image_classification_wf"))
-
-# from nlp_classification_wf.nlp_workload import nlp_main
-# from image_classification_wf.vision_wl import vision_main
-
 
 class CreateDictParam(argparse.Action):
     """
