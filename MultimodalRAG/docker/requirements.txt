@@ -1,0 +1,5 @@
+pandas
+wget
+docx2txt
+image
+openpyxl
