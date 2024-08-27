@@ -3,7 +3,7 @@
 
 import os
 
-from comps import MMRagGateway, MicroService, ServiceOrchestrator, ServiceType
+from comps import MultimodalQnAGateway, MicroService, ServiceOrchestrator, ServiceType
 
 MEGA_SERVICE_HOST_IP = os.getenv("MEGA_SERVICE_HOST_IP", "0.0.0.0")
 MEGA_SERVICE_PORT = int(os.getenv("MEGA_SERVICE_PORT", 8888))
@@ -49,7 +49,7 @@ class MMRagService:
         self.megaservice.add(embedding).add(retriever).add(lvm)
         self.megaservice.flow_to(embedding, retriever)
         self.megaservice.flow_to(retriever, lvm)
-        self.gateway = MMRagGateway(megaservice=self.megaservice, host="0.0.0.0", port=self.port)
+        self.gateway = MultimodalQnAGateway(megaservice=self.megaservice, host="0.0.0.0", port=self.port)
 
 
 if __name__ == "__main__":
