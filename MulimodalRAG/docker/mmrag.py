@@ -7,11 +7,11 @@ from comps import MultimodalQnAGateway, MicroService, ServiceOrchestrator, Servi
 
 MEGA_SERVICE_HOST_IP = os.getenv("MEGA_SERVICE_HOST_IP", "0.0.0.0")
 MEGA_SERVICE_PORT = os.getenv("MEGA_SERVICE_PORT", 8888)
-EMBEDDING_SERVICE_HOST_IP = os.getenv("EMBEDDING_SERVICE_HOST_IP", "0.0.0.0")
+EMBEDDING_SERVICE_HOST_IP = os.getenv("EMBEDDING_SERVICE_HOST_IP", "http://embedding-service")
 EMBEDDING_SERVICE_PORT = os.getenv("EMBEDDING_SERVICE_PORT", 6000)
-RETRIEVER_SERVICE_HOST_IP = os.getenv("RETRIEVER_SERVICE_HOST_IP", "0.0.0.0")
+RETRIEVER_SERVICE_HOST_IP = os.getenv("RETRIEVER_SERVICE_HOST_IP", "http://retriever-redis-service")
 RETRIEVER_SERVICE_PORT = os.getenv("RETRIEVER_SERVICE_PORT", 7000)
-LVM_SERVICE_HOST_IP = os.getenv("LVM_SERVICE_HOST_IP", "0.0.0.0")
+LVM_SERVICE_HOST_IP = os.getenv("LVM_SERVICE_HOST_IP", "http://lvm-service")
 LVM_SERVICE_PORT = os.getenv("LVM_SERVICE_PORT", 9000)
 
 
